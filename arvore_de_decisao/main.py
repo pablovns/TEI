@@ -1,10 +1,9 @@
-import pandas as pd #Pandas
-from sklearn import tree
+import pandas as pd
 import streamlit as st
+from sklearn import tree
 
 
-st.title('Árvores de decisão')
-
+st.title('Predição de jogos de tênis')
 
 dfTenis = pd.DataFrame({
 'Tempo'       : ['Chuvoso', 'Ensolarado', 'Ensolarado', 'Nublado', 'Chuvoso',
@@ -25,49 +24,42 @@ dfTenis = pd.DataFrame({
                  'Sim','Não','Não','Sim']
 })
 
-quali = ['Tempo', 'Vento'] #Variáveis qualitativas
-quant = ['Temperatura', 'Umidade'] #Variáveis quantitativas
+quali = ['Tempo', 'Vento']
+quant = ['Temperatura', 'Umidade']
 
-dfQualiDummies = pd.get_dummies(dfTenis[quali]) #Dataframe com qualitativas dummy
-dfQuant = dfTenis[quant] #Dataframe com quantitativas
+dfQualiDummies = pd.get_dummies(dfTenis[quali])
+dfQuant = dfTenis[quant]
 
-dfWork = pd.concat([dfQualiDummies, dfQuant ], axis=1 ) #Dataframe com quali dummy e quant
+dfWork = pd.concat([dfQualiDummies, dfQuant ], axis=1 )
 target = dfTenis['Jogo']
 
-arv = tree.DecisionTreeClassifier() #árvore de classificação
-arv.fit(dfWork, target)
-
 vento = st.radio('Tem vento?', ['Sim', 'Não'])
-tempo = st.selectbox('Selecione o tempo', ['Chuvoso', 'Ensolarado', 'Nublado'])
-temperatura = st.number_input('Insira a temperatura (°C)', value=0)
-umidade = st.number_input('Insira a umidade', value=0)
+tempo = st.selectbox('Selecione o clima', ['Chuvoso', 'Ensolarado', 'Nublado'])
+umidade = st.number_input('Informe a umidade', value=0)
+temperatura = st.number_input('Informe a temperatura (°C)', value=0)
 
-# inicia com todos iguais a 0 para depois alterar
-vals = [
-    0,  #Tempo_Chuvoso
-    0,  #Tempo_Ensolarado
-    0,  #Tempo_Nublado
-    0,  #Vento_Não
-    0,  #Vento_Sim
-    int(temperatura), #Temperatura
-    int(umidade)  #Umidade
+# inicia todos como 0 pra depois alterar
+valores = [
+    0, 0, 0, 0, 0, int(temperatura), int(umidade)
 ]
 
-op_tempo = {
-    'Chuvoso': vals[0],
-    'Ensolarado': vals[1],
-    'Nublado': vals[2]
+opcoes_vento = {
+    'Não': valores[3],
+    'Sim': valores[4]
 }
 
-op_vento = {
-    'Não': vals[3],
-    'Sim': vals[4]
+opcoes_tempo = {
+    'Chuvoso': valores[0],
+    'Ensolarado': valores[1],
+    'Nublado': valores[2]
 }
 
-op_tempo[tempo] = 1
-op_vento[vento] = 1
+opcoes_vento[vento] = 1
+opcoes_tempo[tempo] = 1
 
-res = arv.predict([vals])
+arv = tree.DecisionTreeClassifier()
+arv.fit(dfWork, target)
+res = arv.predict([valores])
 
 if res[0] == 'Sim':
     st.write("Terá jogo.")
