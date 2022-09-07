@@ -1,9 +1,7 @@
 import pandas as pd
-import numpy as np #Numpy
-import pandas as pd #Pandas
-import matplotlib.pyplot as plt #Matplotlib
+import numpy as np
+import pandas as pd
 from sklearn.linear_model import LinearRegression #Regressão linear
-from sklearn import metrics #Cálculo do erro
 import streamlit as st
 
 rioAptos = pd.read_csv('https://raw.githubusercontent.com/mvinoba/notebooks-for-binder/master/dados.csv')
